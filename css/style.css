@@ -1,0 +1,197 @@
+/* Estilos do simulador (não altera nenhum cálculo) */
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #222;
+  background: #fff;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+}
+
+h1 { font-size: 1.6rem; margin: 8px 0 4px; }
+h2 { font-size: 1.2rem; margin: 32px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #ccc; }
+p { margin: 4px 0; }
+sub { font-size: 0.72em; }
+
+.nota { color: #666; font-size: 0.9rem; }
+
+/* ---------- Formulário ---------- */
+fieldset { border: 1px solid #bbb; margin: 16px 0; padding: 8px 14px 12px; }
+legend { font-weight: bold; padding: 0 4px; }
+
+.campos { display: flex; flex-wrap: wrap; gap: 12px 40px; }
+.campo { flex: 1 1 220px; }
+.campo label { display: block; margin-bottom: 4px; }
+
+input[type="text"], select, button { font: inherit; }
+input[type="text"] { width: 5em; padding: 3px 5px; }
+input[type="range"] { display: block; width: 100%; max-width: 260px; margin-top: 6px; }
+
+.invalido { border: 1px solid #c00; background: #fff0f0; }
+.erro { color: #c00; font-size: 0.9rem; }
+.erro:empty { display: none; }
+
+/* Regras */
+.regra-config {
+  display: grid;
+  grid-template-columns: 2em minmax(0, 28em) auto auto;
+  justify-content: start;
+  align-items: center;
+  column-gap: 8px;
+  padding: 2px 0;
+}
+.regra-id { font-weight: bold; }
+.regra-alterada { display: none; color: #c00; font-size: 0.85rem; }
+.regra-config.alterada .regra-alterada { display: inline; }
+
+/* Botões e mensagens */
+.acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+button { padding: 5px 14px; cursor: pointer; }
+.dica { color: #666; font-size: 0.9rem; margin-left: 6px; }
+
+.aviso { font-size: 0.92rem; margin-top: 8px; }
+.aviso:empty { display: none; }
+.aviso-info { color: #555; }
+.aviso-sucesso { color: #1a7a30; }
+.aviso-erro { color: #c00; }
+
+/* Resultado */
+.resultado { border: 1px solid #999; background: #f6f6f6; padding: 10px 14px; margin: 14px 0; }
+.resultado-linha { font-size: 1.25rem; }
+.resultado.sem-saida { border-color: #c00; background: #fff0f0; }
+
+/* ---------- Etapas ---------- */
+.etapa-status { font-size: 0.8rem; font-weight: normal; color: #888; }
+.etapa.concluida .etapa-status { color: #1a7a30; }
+
+.grade-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+@media (max-width: 700px) { .grade-2 { grid-template-columns: 1fr; } }
+
+.vazio { color: #888; font-style: italic; }
+.resumo { margin-bottom: 8px; }
+.alerta { color: #c00; }
+
+/* Graus abaixo dos gráficos de entrada */
+.graus { list-style: none; padding: 0; margin: 4px 0 0; }
+.grau { display: flex; align-items: center; gap: 6px; }
+.grau-valor::before { content: "= "; font-weight: normal; }
+.grau.positivo .grau-valor { font-weight: bold; }
+.grau.zero { color: #888; }
+.amostra-cor { width: 11px; height: 11px; background: var(--cor); display: inline-block; flex: none; }
+
+/* Tabelas */
+.tabela-rolagem { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 0.92rem; }
+th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; white-space: nowrap; }
+thead th { background: #f0f0f0; }
+.num { font-variant-numeric: tabular-nums; }
+
+.tabela-regras { width: 100%; }
+.tabela-regras tbody tr { cursor: pointer; }
+.tabela-regras tbody tr:hover { background: #f5f5f5; }
+.tabela-regras tr.ativa { background: #e8f5e9; }
+.tabela-regras tr.inativa { color: #777; }
+.tabela-regras tr.selecionada { outline: 2px solid #2a6fdb; outline-offset: -2px; }
+.selo-ativa { font-weight: bold; color: #1a7a30; }
+
+.tabela-pontos { margin-top: 8px; }
+.tabela-pontos caption { text-align: left; margin-bottom: 4px; white-space: nowrap; }
+
+/* Implicação */
+.detalhe-escolha { margin: 8px 0; }
+.detalhe-escolha label { margin-right: 6px; }
+#grafico-regra { max-width: 640px; }
+.legenda-texto { color: #555; font-size: 0.9rem; }
+.lista-recortes { columns: 220px 3; margin: 10px 0 0; padding-left: 20px; font-size: 0.9rem; }
+.lista-recortes .nao-contribui { color: #888; }
+
+/* Defuzzificação */
+.contas { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; margin: 8px 0 0; }
+.contas dt { color: #555; }
+.contas dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.contas .destaque { font-weight: bold; }
+
+/* Legenda do gráfico de saída */
+.legenda { list-style: none; padding: 0; margin: 6px 0 0; font-size: 0.88rem; color: #444; }
+.legenda li { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+.legenda .amostra { width: 28px; height: 12px; flex: none; }
+.amostra-agregada { background: var(--cor-agregada); opacity: 0.5; }
+.linha-original-amostra { stroke: #777; stroke-width: 2; stroke-dasharray: 5 4; }
+
+/* Registro */
+.log { padding-left: 1.4em; font-size: 0.92rem; }
+.log li { margin-bottom: 6px; }
+.log ul { margin: 2px 0 0; padding-left: 1.2em; color: #555; }
+.log-vazio { color: #888; font-style: italic; list-style: none; margin-left: -1.4em; }
+
+footer { margin-top: 40px; padding-top: 8px; border-top: 1px solid #ccc; color: #666; font-size: 0.88rem; }
+
+/* ---------- Gráficos (SVG) ---------- */
+:root {
+  --cor-seco: #e07b00;
+  --cor-intermediario: #2ca02c;
+  --cor-umido: #1f77b4;
+  --cor-baixa: #1f77b4;
+  --cor-media: #2ca02c;
+  --cor-alta: #d62728;
+  --cor-curto: #1f77b4;
+  --cor-medio: #e07b00;
+  --cor-longo: #2ca02c;
+  --cor-agregada: #888;
+  --cor-centroide: #d62728;
+}
+
+.grafico svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grafico .grade { stroke: #e3e3e3; stroke-width: 1; }
+.grafico .eixo { stroke: #555; stroke-width: 1.2; }
+.grafico .marca { stroke: #555; stroke-width: 1; }
+.grafico .marca-texto { fill: #555; font-size: 12px; }
+.grafico .titulo-eixo { fill: #222; font-size: 12.5px; }
+
+.grafico .linha-conj { fill: none; stroke: var(--cor); stroke-width: 2.2; }
+.grafico .rotulo-conj { fill: var(--cor); font-size: 13px; font-weight: bold; }
+.grafico .marcador { stroke: #222; stroke-width: 1.4; stroke-dasharray: 5 4; }
+.grafico .rotulo-marcador { fill: #222; font-size: 13px; font-weight: bold; }
+.grafico .ponto { fill: var(--cor); stroke: #fff; stroke-width: 1.5; }
+
+.grafico .linha-original { fill: none; stroke: var(--cor); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.grafico .area-recorte { fill: var(--cor); fill-opacity: 0.15; }
+.grafico .area-recorte.forte { fill-opacity: 0.3; }
+.grafico .linha-recorte { fill: none; stroke: var(--cor); stroke-width: 2.2; }
+.grafico .area-agregada { fill: var(--cor-agregada); fill-opacity: 0.2; }
+.grafico .contorno-agregada { fill: none; stroke: #333; stroke-width: 2.5; }
+.grafico .linha-altura { stroke: #777; stroke-width: 1.2; stroke-dasharray: 3 4; }
+.grafico .rotulo-altura { fill: #222; font-size: 13px; font-weight: bold; }
+.grafico .texto-vazio { fill: #777; font-size: 13px; }
+.linha-centroide { stroke: var(--cor-centroide); stroke-width: 2.4; }
+.grafico .rotulo-centroide { fill: var(--cor-centroide); font-size: 13px; font-weight: bold; }
+
+/* fundo branco atrás dos textos que ficam por cima das linhas */
+.halo { paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+
+/* cor de cada conjunto */
+.conj-umidade-0 { --cor: var(--cor-seco); }
+.conj-umidade-1 { --cor: var(--cor-intermediario); }
+.conj-umidade-2 { --cor: var(--cor-umido); }
+.conj-temperatura-0 { --cor: var(--cor-baixa); }
+.conj-temperatura-1 { --cor: var(--cor-media); }
+.conj-temperatura-2 { --cor: var(--cor-alta); }
+.conj-tempo-0 { --cor: var(--cor-curto); }
+.conj-tempo-1 { --cor: var(--cor-medio); }
+.conj-tempo-2 { --cor: var(--cor-longo); }
+
+/* ---------- Página de testes ---------- */
+.cartao { margin-top: 8px; }
+.resumo-testes { font-size: 1.1rem; font-weight: bold; }
+.resumo-testes.ok { color: #1a7a30; }
+.resumo-testes.falha { color: #c00; }
+.tabela-testes { width: 100%; margin-top: 8px; }
+.tabela-testes td { white-space: normal; vertical-align: top; }
+.tabela-testes td.num { white-space: nowrap; }
+.passou { color: #1a7a30; font-weight: bold; }
+.falhou { color: #c00; font-weight: bold; }
+.roteiro { padding-left: 1.4em; }
+.roteiro li { margin-bottom: 4px; }
