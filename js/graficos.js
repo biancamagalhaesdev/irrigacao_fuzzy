@@ -1,24 +1,7 @@
-/* =====================================================================
- * graficos.js — Gráficos em SVG (sem bibliotecas externas)
- * ---------------------------------------------------------------------
- * Este arquivo só DESENHA. Ele não decide nada sobre a inferência:
- * quando precisa de um valor de pertinência, pergunta ao objeto Fuzzy.
- *
- * Ideia geral de cada gráfico:
- *   - eixo horizontal: a variável (umidade, temperatura ou tempo);
- *   - eixo vertical: grau de pertinência, de 0 a 1;
- *   - "escalas" convertem valores reais em pixels na tela.
- *
- * O SVG é montado como texto e colocado dentro de um <div>.
- * As cores ficam no CSS (classes conj-umidade-0, conj-tempo-2 etc.).
- * ===================================================================== */
-
 const Graficos = {
 
-  /* Espaço em pixels reservado em volta da área do gráfico. */
   MARGEM: { esq: 58, dir: 18, topo: 30, base: 50 },
 
-  /* Distância entre as marcas do eixo horizontal. */
   PASSO_MARCAS: { umidade: 10, temperatura: 5, tempo: 5 },
 
   TITULO_EIXO_X: {
@@ -29,33 +12,23 @@ const Graficos = {
 
   SIMBOLO: { umidade: "U", temperatura: "T", tempo: "z" },
 
-  /* Quantidade de pontos usada para DESENHAR curvas recortadas.
-   * (Não tem relação com o Δz do cálculo: isto é só aparência.) */
   AMOSTRAS: 1200,
 
-  /* Guardamos como redesenhar cada gráfico quando a janela muda de tamanho. */
   _redesenhos: {},
   _larguras: {},
 
-  /* ------------------------------------------------------------------
-   * Ferramentas básicas
-   * ------------------------------------------------------------------ */
-
-  /* Mede o espaço disponível. O SVG usa o tamanho real em pixels,
-   * assim os textos ficam legíveis no celular e no computador. */
   medir: function (elemento) {
     const largura = Math.max(300, Math.round(elemento.clientWidth || 600));
     const altura = Math.round(Math.min(320, Math.max(240, largura * 0.55)));
     return { largura: largura, altura: altura };
   },
 
-  /* Cria as funções que convertem (valor, grau) em (x, y) na tela. */
   escalas: function (dominio, tamanho) {
     const m = Graficos.MARGEM;
     const x0 = m.esq;
     const x1 = tamanho.largura - m.dir;
-    const y0 = tamanho.altura - m.base; // linha do grau 0
-    const y1 = m.topo;                  // linha do grau 1
+    const y0 = tamanho.altura - m.base; 
+    const y1 = m.topo;                
     return {
       largura: tamanho.largura, altura: tamanho.altura,
       x0: x0, x1: x1, y0: y0, y1: y1,
@@ -68,12 +41,10 @@ const Graficos = {
     };
   },
 
-  /* Arredonda coordenadas de desenho (só pixels; não afeta cálculos). */
   n: function (valor) {
     return valor.toFixed(1);
   },
 
-  /* Guarda a função de redesenho do gráfico e a largura usada. */
   _lembrar: function (elemento, redesenhar) {
     Graficos._redesenhos[elemento.id] = redesenhar;
     Graficos._larguras[elemento.id] = elemento.clientWidth;
@@ -85,8 +56,6 @@ const Graficos = {
       '" role="img" aria-label="' + descricao + '">';
   },
 
-  /* Pontos exatos de um conjunto (a, b, c, d): como a função é reta entre
-   * os parâmetros, basta ligar os pontos nos parâmetros e nas bordas. */
   pontosConjunto: function (params, dominio) {
     const xs = [dominio.min, dominio.max].concat(params)
       .filter(function (v) { return v >= dominio.min && v <= dominio.max; })
@@ -95,8 +64,6 @@ const Graficos = {
     return unicos.map(function (x) { return [x, Fuzzy.pertinencia(x, params)]; });
   },
 
-  /* Avalia uma função em muitos pontos e remove os pontos alinhados
-   * (deixa o SVG leve sem perder o formato). */
   amostrar: function (funcao, dominio) {
     const pontos = [];
     const total = Graficos.AMOSTRAS;
@@ -129,7 +96,6 @@ const Graficos = {
       " L" + Graficos.n(esc.x(ultimo[0])) + " " + Graficos.n(esc.y(0)) + " Z";
   },
 
-  /* Eixos, grade, marcas e títulos (eixo y sempre de 0 a 1). */
   eixos: function (esc, dominio, variavel) {
     let s = '<g class="eixos">';
 
@@ -140,7 +106,6 @@ const Graficos = {
            '" dy="4" text-anchor="end">' + Fuzzy.formatarGrau(grau) + "</text>";
     });
 
-    // Em telas estreitas, usamos metade das marcas para não encavalar.
     let passo = Graficos.PASSO_MARCAS[variavel];
     const qtd = (dominio.max - dominio.min) / passo;
     if ((esc.x1 - esc.x0) / qtd < 34) passo = passo * 2;
@@ -163,7 +128,6 @@ const Graficos = {
     return s + "</g>";
   },
 
-  /* Nome do conjunto escrito acima do seu ponto mais alto. */
   rotuloConjunto: function (conjunto, indice, variavel, dominio, esc) {
     const centro = (conjunto.params[1] + conjunto.params[2]) / 2;
     const amplitude = dominio.max - dominio.min;
@@ -175,7 +139,6 @@ const Graficos = {
       conjunto.nome + "</text>";
   },
 
-  /* Texto com "contorno" da cor do fundo, para ficar legível sobre linhas. */
   rotulo: function (classe, x, y, ancora, texto) {
     return '<text class="' + classe + ' halo" x="' + Graficos.n(x) + '" y="' + Graficos.n(y) +
       '" text-anchor="' + ancora + '">' + texto + "</text>";
@@ -185,10 +148,6 @@ const Graficos = {
     return Fuzzy.CONJUNTOS.tempo.map(function (c) { return c.id; }).indexOf(id);
   },
 
-  /* ==================================================================
-   * GRÁFICO DE ENTRADA (umidade ou temperatura)
-   *   valor e graus podem ser null: nesse caso só os conjuntos aparecem.
-   * ================================================================== */
   desenharEntrada: function (elemento, variavel, valor, graus) {
     Graficos._lembrar(elemento, function () {
       Graficos.desenharEntrada(elemento, variavel, valor, graus);
@@ -217,7 +176,6 @@ const Graficos = {
       svg += '<line class="marcador" x1="' + Graficos.n(x) + '" y1="' + esc.y0 +
              '" x2="' + Graficos.n(x) + '" y2="' + (esc.y1 - 4) + '"/>';
 
-      // Um ponto onde a linha vertical cruza cada conjunto.
       conjuntos.forEach(function (conjunto, i) {
         svg += '<circle class="ponto conj-' + variavel + "-" + i + '" cx="' + Graficos.n(x) +
                '" cy="' + Graficos.n(esc.y(graus[conjunto.id])) + '" r="5"/>';
@@ -232,12 +190,6 @@ const Graficos = {
     elemento.innerHTML = svg + "</svg>";
   },
 
-  /* ==================================================================
-   * GRÁFICO DE SAÍDA (tempo de irrigação)
-   *   opcoes.recortes       -> desenha os recortes das regras (etapa 3)
-   *   opcoes.agregacao      -> preenche a região agregada (etapa 4)
-   *   opcoes.defuzzificacao -> linha vertical do centroide (etapa 5)
-   * ================================================================== */
   desenharSaida: function (elemento, opcoes) {
     opcoes = opcoes || {};
     Graficos._lembrar(elemento, function () {
@@ -252,7 +204,6 @@ const Graficos = {
 
     svg += Graficos.eixos(esc, dominio, "tempo");
 
-    // 1) Região agregada (fica no fundo para não esconder as outras linhas)
     let pontosAgregada = null;
     if (opcoes.agregacao) {
       pontosAgregada = Graficos.amostrar(function (z) {
@@ -261,7 +212,6 @@ const Graficos = {
       svg += '<path class="area-agregada" d="' + Graficos.caminhoArea(pontosAgregada, esc) + '"/>';
     }
 
-    // 2) Conjuntos originais, tracejados
     Fuzzy.CONJUNTOS.tempo.forEach(function (conjunto, i) {
       const pontos = Graficos.pontosConjunto(conjunto.params, dominio);
       svg += '<path class="linha-original conj-tempo-' + i + '" d="' +
@@ -269,7 +219,6 @@ const Graficos = {
       svg += Graficos.rotuloConjunto(conjunto, i, "tempo", dominio, esc);
     });
 
-    // 3) Recortes das regras que contribuem (recortes iguais são desenhados uma vez)
     if (opcoes.recortes) {
       Graficos.gruposDeRecorte(opcoes.recortes).forEach(function (grupo) {
         const i = Graficos.indiceTempo(grupo.consequente);
@@ -281,12 +230,10 @@ const Graficos = {
       });
     }
 
-    // 4) Contorno da região agregada
     if (pontosAgregada) {
       svg += '<path class="contorno-agregada" d="' + Graficos.caminhoLinha(pontosAgregada, esc) + '"/>';
     }
 
-    // 5) Centroide
     const d = opcoes.defuzzificacao;
     if (d && d.valido) {
       const x = esc.x(d.centroide);
@@ -301,8 +248,6 @@ const Graficos = {
     elemento.innerHTML = svg + "</svg>";
   },
 
-  /* Agrupa regras com o mesmo consequente e a mesma altura h.
-   * Ex.: R2, R3 e R6 recortam "longo" em 0,5 -> um único desenho. */
   gruposDeRecorte: function (recortes) {
     const grupos = [];
     recortes.forEach(function (r) {
@@ -316,7 +261,6 @@ const Graficos = {
     return grupos;
   },
 
-  /* Legenda em HTML para o gráfico de saída. */
   legendaSaida: function (opcoes) {
     opcoes = opcoes || {};
     const itens = [];
@@ -353,9 +297,6 @@ const Graficos = {
     return itens.join("");
   },
 
-  /* ==================================================================
-   * DETALHE DE UMA REGRA: consequente original x recorte da implicação
-   * ================================================================== */
   desenharRegra: function (elemento, recorte) {
     Graficos._lembrar(elemento, function () {
       Graficos.desenharRegra(elemento, recorte);
@@ -399,7 +340,6 @@ const Graficos = {
   }
 };
 
-/* Quando a largura da janela muda, redesenha os gráficos no novo tamanho. */
 window.addEventListener("resize", function () {
   clearTimeout(Graficos._temporizador);
   Graficos._temporizador = setTimeout(function () {
