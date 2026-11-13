@@ -1,19 +1,3 @@
-/* =====================================================================
- * interface.js — Liga a página ao motor (Fuzzy) e aos gráficos (Graficos)
- * ---------------------------------------------------------------------
- * Responsabilidades:
- *   - ler e validar os campos;
- *   - reagir aos botões Calcular, Avançar etapa e Restaurar padrão;
- *   - guardar em que etapa estamos;
- *   - mostrar tabelas, textos, gráficos e o registro (log).
- *
- * Este arquivo NÃO contém fórmulas fuzzy: ele chama as funções do
- * objeto Fuzzy (fuzzy.js) e entrega os resultados ao objeto Graficos.
- * ===================================================================== */
-
-/* ------------------------------------------------------------------
- * 1. Referências aos elementos da página (pelo atributo id do HTML)
- * ------------------------------------------------------------------ */
 const el = {
   campoU: document.getElementById("campo-umidade"),
   sliderU: document.getElementById("slider-umidade"),
@@ -50,30 +34,22 @@ const el = {
 
 const NOMES_ETAPAS = ["Fuzzificação", "Avaliação das regras", "Implicação", "Agregação", "Defuzzificação"];
 
-/* Valores iniciais exigidos pelo enunciado (seção 3). */
 const PADRAO = { umidade: "35", temperatura: "30", passo: "0.1" };
 
-/* ------------------------------------------------------------------
- * 2. Estado da aplicação: em que etapa estamos e o que já foi calculado
- * ------------------------------------------------------------------ */
 const estado = {
-  etapa: 0,              // 0 = nada executado; 1 a 5 = última etapa executada
-  config: null,          // entradas validadas usadas na sequência atual
-  fuzzificacao: null,    // resultado da etapa 1
-  avaliacoes: null,      // resultado da etapa 2
-  recortes: null,        // resultado da etapa 3
-  agregacao: null,       // resultado da etapa 4
-  defuzzificacao: null,  // resultado da etapa 5
-  regraSelecionada: null // regra exibida no detalhe da implicação
+  etapa: 0,             
+  config: null,         
+  fuzzificacao: null,    
+  avaliacoes: null,     
+  recortes: null,       
+  agregacao: null,       
+  defuzzificacao: null,
+  regraSelecionada: null 
 };
 
-/* Atalhos de formatação (apenas exibição). */
 function grau(n) { return Fuzzy.formatarGrau(n); }
 function seis(n) { return Fuzzy.formatar(n, 0, 6); }
 
-/* ------------------------------------------------------------------
- * 3. Montagem da lista de regras (9 seletores de consequente)
- * ------------------------------------------------------------------ */
 function montarListaRegras() {
   el.listaRegras.innerHTML = "";
 
@@ -105,7 +81,6 @@ function montarListaRegras() {
   });
 }
 
-/* Lê os 9 seletores e devolve a base de regras atual. */
 function lerRegras() {
   return Fuzzy.REGRAS_PADRAO.map(function (padrao) {
     return {
@@ -117,7 +92,6 @@ function lerRegras() {
   });
 }
 
-/* Destaca as regras cujo consequente difere do padrão. */
 function marcarRegrasAlteradas() {
   Fuzzy.REGRAS_PADRAO.forEach(function (padrao) {
     const valor = document.getElementById("consequente-" + padrao.id).value;
@@ -132,9 +106,6 @@ function regrasAlteradas(regras) {
   }).map(function (r) { return r.id; });
 }
 
-/* ------------------------------------------------------------------
- * 4. Validação e mensagens
- * ------------------------------------------------------------------ */
 function mostrarErro(campo, elementoErro, mensagem) {
   elementoErro.textContent = mensagem || "";
   if (campo) {
@@ -148,8 +119,6 @@ function avisar(texto, tipo) {
   el.aviso.className = "aviso aviso-" + (tipo || "info");
 }
 
-/* Lê TODOS os campos. Se algum for inválido, mostra as mensagens e
- * devolve null: o cálculo não acontece. Nenhum valor é corrigido. */
 function lerConfiguracao() {
   const vU = Fuzzy.validarNumero(el.campoU.value, "umidade");
   const vT = Fuzzy.validarNumero(el.campoT.value, "temperatura");
@@ -172,8 +141,6 @@ function lerConfiguracao() {
   return { U: vU.valor, T: vT.valor, dz: vDz.valor, regras: regras };
 }
 
-/* Qualquer mudança de configuração apaga os resultados anteriores
- * e faz a sequência de etapas recomeçar (seção 3 do enunciado). */
 function configuracaoAlterada() {
   if (estado.etapa > 0) {
     limparResultados();
@@ -181,7 +148,6 @@ function configuracaoAlterada() {
   }
 }
 
-/* Campo de texto -> valida na hora e, se válido, move o controle deslizante. */
 function aoDigitar(campo, slider, elementoErro, variavel) {
   const v = Fuzzy.validarNumero(campo.value, variavel);
   mostrarErro(campo, elementoErro, v.mensagem);
@@ -189,18 +155,12 @@ function aoDigitar(campo, slider, elementoErro, variavel) {
   configuracaoAlterada();
 }
 
-/* Controle deslizante -> copia o valor para o campo de texto. */
 function aoDeslizar(campo, slider, elementoErro) {
   campo.value = slider.value;
   mostrarErro(campo, elementoErro, "");
   configuracaoAlterada();
 }
 
-/* ------------------------------------------------------------------
- * 5. Execução das etapas
- *    "Calcular" e "Avançar etapa" usam a MESMA função executarEtapa,
- *    portanto produzem exatamente os mesmos números.
- * ------------------------------------------------------------------ */
 function iniciarSequencia() {
   const config = lerConfiguracao();
   if (!config) return false;
@@ -236,7 +196,6 @@ function calcular() {
   for (let n = 1; n <= 5; n++) executarEtapa(n);
   avisar("Inferência completa: as cinco etapas foram executadas.", "sucesso");
 
-  // Em telas estreitas, leva o usuário até o resultado.
   if (window.innerWidth < 960) {
     const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     el.resultado.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "start" });
@@ -244,7 +203,6 @@ function calcular() {
 }
 
 function avancarEtapa() {
-  // Começo da sequência (ou recomeço depois da etapa 5): valida as entradas.
   if (estado.etapa === 0 || estado.etapa === 5) {
     if (!iniciarSequencia()) return;
   }
@@ -271,11 +229,6 @@ function restaurarPadrao() {
   avisar("Configuração padrão restaurada: U = 35 %, T = 30 °C, Δz = 0,1 min e as nove regras originais. Resultados apagados.", "sucesso");
 }
 
-/* ------------------------------------------------------------------
- * 6. Exibição de cada etapa
- * ------------------------------------------------------------------ */
-
-/* Lista de graus abaixo de cada gráfico de entrada (inclusive os zeros). */
 function mostrarListaGraus(ul, variavel, graus, valor) {
   const simbolo = Graficos.SIMBOLO[variavel];
   ul.innerHTML = Fuzzy.CONJUNTOS[variavel].map(function (conjunto, i) {
@@ -338,7 +291,6 @@ function mostrarAvaliacao() {
   html += "</tbody></table></div>";
   el.conteudo2.innerHTML = html;
 
-  // Clique (ou Enter) numa linha seleciona a regra para o detalhe da etapa 3.
   el.conteudo2.querySelectorAll("tbody tr").forEach(function (linha) {
     linha.addEventListener("click", function () { selecionarRegra(linha.dataset.regra); });
     linha.addEventListener("keydown", function (evento) {
@@ -400,7 +352,6 @@ function mostrarImplicacao() {
     : "Nenhuma regra tem h > 0: não há conjuntos recortados.");
 }
 
-/* Mostra o consequente original e o recorte da regra escolhida. */
 function selecionarRegra(id) {
   estado.regraSelecionada = id;
   el.conteudo2.querySelectorAll("tbody tr").forEach(function (linha) {
@@ -429,7 +380,6 @@ function desenharDetalheRegra() {
   });
 }
 
-/* Junta as regras ativas por consequente: { consequente, hMax, regras } */
 function agruparPorConsequente(contribuintes) {
   return Fuzzy.CONJUNTOS.tempo.map(function (conjunto) {
     const doConjunto = contribuintes.filter(function (r) { return r.consequente === conjunto.id; });
@@ -515,7 +465,6 @@ function mostrarDefuzzificacao() {
   Graficos.desenharSaida(el.graficoSaida, opcoes);
   el.legendaSaida.innerHTML = Graficos.legendaSaida(opcoes);
 
-  // Resultado principal
   el.resultado.className = "resultado pronto";
   el.resultadoNumero.textContent = Fuzzy.formatar(d.centroide, 2);
   el.resultadoDetalhe.textContent = "Centroide com 6 casas: " + Fuzzy.formatar(d.centroide, 6) + " min.";
@@ -529,9 +478,6 @@ function mostrarDefuzzificacao() {
     " min. Tempo recomendado: " + Fuzzy.formatar(d.centroide, 2) + " min.");
 }
 
-/* ------------------------------------------------------------------
- * 7. Registro (log), situação das etapas e limpeza
- * ------------------------------------------------------------------ */
 function registrar(etapa, texto, detalhes) {
   const vazio = el.log.querySelector(".log-vazio");
   if (vazio) vazio.remove();
@@ -560,7 +506,6 @@ function textoPendente(n) {
   return '<p class="vazio">A etapa ' + n + " ainda não foi executada. Use Calcular ou Avançar etapa.</p>";
 }
 
-/* Volta a tela ao estado "nada calculado". */
 function limparResultados() {
   estado.etapa = 0;
   estado.config = null;
@@ -593,11 +538,6 @@ function limparResultados() {
   atualizarEtapas();
 }
 
-/* ------------------------------------------------------------------
- * 8. Link do repositório
- * Se o href ainda tiver "SEU-USUARIO" e a página estiver no GitHub Pages
- * (endereço usuario.github.io/repositorio), montamos o link correto.
- * ------------------------------------------------------------------ */
 function configurarLinkRepositorio() {
   const host = window.location.hostname;
   if (el.linkRepo.href.indexOf("SEU-USUARIO") === -1 || !host.endsWith(".github.io")) return;
@@ -608,9 +548,6 @@ function configurarLinkRepositorio() {
   }
 }
 
-/* ------------------------------------------------------------------
- * 9. Ligação dos eventos e início
- * ------------------------------------------------------------------ */
 function ligarEventos() {
   el.campoU.addEventListener("input", function () { aoDigitar(el.campoU, el.sliderU, el.erroU, "umidade"); });
   el.campoT.addEventListener("input", function () { aoDigitar(el.campoT, el.sliderT, el.erroT, "temperatura"); });
@@ -621,7 +558,6 @@ function ligarEventos() {
     configuracaoAlterada();
   });
 
-  // Enter dentro de um campo de texto equivale a clicar em Calcular.
   [el.campoU, el.campoT].forEach(function (campo) {
     campo.addEventListener("keydown", function (evento) {
       if (evento.key === "Enter") calcular();
