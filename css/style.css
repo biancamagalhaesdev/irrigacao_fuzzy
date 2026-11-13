@@ -1,4 +1,3 @@
-/* Estilos do simulador (não altera nenhum cálculo) */
 
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -18,7 +17,6 @@ sub { font-size: 0.72em; }
 
 .nota { color: #666; font-size: 0.9rem; }
 
-/* ---------- Formulário ---------- */
 fieldset { border: 1px solid #bbb; margin: 16px 0; padding: 8px 14px 12px; }
 legend { font-weight: bold; padding: 0 4px; }
 
@@ -34,7 +32,6 @@ input[type="range"] { display: block; width: 100%; max-width: 260px; margin-top:
 .erro { color: #c00; font-size: 0.9rem; }
 .erro:empty { display: none; }
 
-/* Regras */
 .regra-config {
   display: grid;
   grid-template-columns: 2em minmax(0, 28em) auto auto;
@@ -47,7 +44,6 @@ input[type="range"] { display: block; width: 100%; max-width: 260px; margin-top:
 .regra-alterada { display: none; color: #c00; font-size: 0.85rem; }
 .regra-config.alterada .regra-alterada { display: inline; }
 
-/* Botões e mensagens */
 .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 button { padding: 5px 14px; cursor: pointer; }
 .dica { color: #666; font-size: 0.9rem; margin-left: 6px; }
@@ -58,12 +54,10 @@ button { padding: 5px 14px; cursor: pointer; }
 .aviso-sucesso { color: #1a7a30; }
 .aviso-erro { color: #c00; }
 
-/* Resultado */
 .resultado { border: 1px solid #999; background: #f6f6f6; padding: 10px 14px; margin: 14px 0; }
 .resultado-linha { font-size: 1.25rem; }
 .resultado.sem-saida { border-color: #c00; background: #fff0f0; }
 
-/* ---------- Etapas ---------- */
 .etapa-status { font-size: 0.8rem; font-weight: normal; color: #888; }
 .etapa.concluida .etapa-status { color: #1a7a30; }
 
@@ -74,7 +68,6 @@ button { padding: 5px 14px; cursor: pointer; }
 .resumo { margin-bottom: 8px; }
 .alerta { color: #c00; }
 
-/* Graus abaixo dos gráficos de entrada */
 .graus { list-style: none; padding: 0; margin: 4px 0 0; }
 .grau { display: flex; align-items: center; gap: 6px; }
 .grau-valor::before { content: "= "; font-weight: normal; }
@@ -82,7 +75,6 @@ button { padding: 5px 14px; cursor: pointer; }
 .grau.zero { color: #888; }
 .amostra-cor { width: 11px; height: 11px; background: var(--cor); display: inline-block; flex: none; }
 
-/* Tabelas */
 .tabela-rolagem { overflow-x: auto; }
 table { border-collapse: collapse; font-size: 0.92rem; }
 th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; white-space: nowrap; }
@@ -100,7 +92,6 @@ thead th { background: #f0f0f0; }
 .tabela-pontos { margin-top: 8px; }
 .tabela-pontos caption { text-align: left; margin-bottom: 4px; white-space: nowrap; }
 
-/* Implicação */
 .detalhe-escolha { margin: 8px 0; }
 .detalhe-escolha label { margin-right: 6px; }
 #grafico-regra { max-width: 640px; }
@@ -108,20 +99,17 @@ thead th { background: #f0f0f0; }
 .lista-recortes { columns: 220px 3; margin: 10px 0 0; padding-left: 20px; font-size: 0.9rem; }
 .lista-recortes .nao-contribui { color: #888; }
 
-/* Defuzzificação */
 .contas { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; margin: 8px 0 0; }
 .contas dt { color: #555; }
 .contas dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .contas .destaque { font-weight: bold; }
 
-/* Legenda do gráfico de saída */
 .legenda { list-style: none; padding: 0; margin: 6px 0 0; font-size: 0.88rem; color: #444; }
 .legenda li { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
 .legenda .amostra { width: 28px; height: 12px; flex: none; }
 .amostra-agregada { background: var(--cor-agregada); opacity: 0.5; }
 .linha-original-amostra { stroke: #777; stroke-width: 2; stroke-dasharray: 5 4; }
 
-/* Registro */
 .log { padding-left: 1.4em; font-size: 0.92rem; }
 .log li { margin-bottom: 6px; }
 .log ul { margin: 2px 0 0; padding-left: 1.2em; color: #555; }
@@ -129,7 +117,6 @@ thead th { background: #f0f0f0; }
 
 footer { margin-top: 40px; padding-top: 8px; border-top: 1px solid #ccc; color: #666; font-size: 0.88rem; }
 
-/* ---------- Gráficos (SVG) ---------- */
 :root {
   --cor-seco: #e07b00;
   --cor-intermediario: #2ca02c;
@@ -169,10 +156,8 @@ footer { margin-top: 40px; padding-top: 8px; border-top: 1px solid #ccc; color: 
 .linha-centroide { stroke: var(--cor-centroide); stroke-width: 2.4; }
 .grafico .rotulo-centroide { fill: var(--cor-centroide); font-size: 13px; font-weight: bold; }
 
-/* fundo branco atrás dos textos que ficam por cima das linhas */
 .halo { paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
 
-/* cor de cada conjunto */
 .conj-umidade-0 { --cor: var(--cor-seco); }
 .conj-umidade-1 { --cor: var(--cor-intermediario); }
 .conj-umidade-2 { --cor: var(--cor-umido); }
@@ -183,7 +168,6 @@ footer { margin-top: 40px; padding-top: 8px; border-top: 1px solid #ccc; color: 
 .conj-tempo-1 { --cor: var(--cor-medio); }
 .conj-tempo-2 { --cor: var(--cor-longo); }
 
-/* ---------- Página de testes ---------- */
 .cartao { margin-top: 8px; }
 .resumo-testes { font-size: 1.1rem; font-weight: bold; }
 .resumo-testes.ok { color: #1a7a30; }
