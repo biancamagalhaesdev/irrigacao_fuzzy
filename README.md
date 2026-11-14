@@ -8,17 +8,15 @@ Atividade prática da disciplina de Inteligência Artificial, Universidade Feder
 
 | Nome completo | Matrícula |
 |---|---|
-| (preencher) | (preencher) |
-| (preencher) | (preencher) |
-| (preencher) | (preencher) |
-
-O trabalho pode ser feito por até três estudantes. Apague as linhas que não forem usadas.
+| Bianca da Silva Magalhães Pinheiro | 20249012612 |
+| Francisco Eudes Andrade Nazário | 20249021344 |
+| Yuri da Silva Barbosa | 20249021792 |
 
 ## Links
 
-- Aplicação publicada (GitHub Pages): `https://SEU-USUARIO.github.io/irrigacao-fuzzy/` (substituir)
-- Repositório público: `https://github.com/SEU-USUARIO/irrigacao-fuzzy` (substituir)
-- Página de testes automáticos: `https://SEU-USUARIO.github.io/irrigacao-fuzzy/testes.html` (substituir)
+- Aplicação publicada (GitHub Pages): `https://biancamagalhaesdev.github.io/irrigacao_fuzzy/' 
+- Repositório público: `https://github.com/biancamagalhaesdev/irrigacao_fuzzy'
+- Página de testes automáticos: `https://biancamagalhaesdev.github.io/irrigacao_fuzzy/testes.html'
 
 ## Objetivo
 
